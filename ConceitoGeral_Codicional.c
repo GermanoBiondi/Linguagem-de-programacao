@@ -9,16 +9,15 @@ int main(void){
 
 
     if(idade >= 18){
-        printf("Você e maior de idade!");}
-            else{printf("Você e menor de idade!");}
-            printf("\n");
-            printf("Sua senha: ");
+        printf("\n VocÃª e maior de idade!");}
+            else{printf("\n VocÃª e menor de idade!");}
+            printf("\n Sua senha: ");
             scanf("%d", &senha);
 
     if(senha == 123){
-    printf("Acesso Liberado.");}
+    printf("\n Acesso Liberado.");}
         else{
-        printf("Senha incorreta.");}
+        printf("\n Senha incorreta.");}
 
 
 }
