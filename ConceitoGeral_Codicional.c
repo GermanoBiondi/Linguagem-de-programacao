@@ -1,5 +1,7 @@
 # include <stdio.h>
 
+
+// Maior ou menor de idade.
 int main(void){
 
     int idade, senha;
@@ -18,10 +20,10 @@ int main(void){
     printf("\n Acesso Liberado.");}
         else{
         printf("\n Senha incorreta.");}
-
-
 }
 
+
+// Maior numero entre 3 digitados pelo usuario.
 int main(void){
 
     int n1, n2, n3;
