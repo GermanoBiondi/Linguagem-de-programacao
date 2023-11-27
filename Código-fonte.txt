@@ -1,0 +1,828 @@
+// Programa destinado para trabalhar com arquivos
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// constante
+#define TAM 100
+#define FILENAME "funcionarios.dados"
+#define TEMPNAME "temp_funcionarios.dados"
+
+struct funcionario {
+    int id;   // indice dos registros
+    char nome[50]; // nome completo do funcionario
+    float salario; // valor do salario
+    char sexo[1]; // sexo do aluno
+    char dtcontrato[10] ; // data contratacao funcionario
+    int e;  // controle de exclusao logica
+} ;
+
+struct funcionario lista[TAM];
+
+// aloca espaco memoria, para manipular o arquivo
+FILE *arq;
+
+int OpenFile(int openType);
+int menu();
+void rodapeficha();
+int continuarficha();
+void cabecalhoficha( char titulo[50]);
+int cadastrar();
+int listaSequencial();
+void consultatodos(); //void consultaSequencial();
+void alterarficha();
+void exclusaologica();
+void ListaConteuroArquivo();
+int submenurelatorios();
+int classificarpornome(struct funcionario vetor[], int n);
+int classificarporid(struct funcionario vetor[], int n);
+void mostrarficha( struct funcionario ficha);
+void ordenarDadosporId();
+void relatoriotodosinativos();
+int getch();
+// MUDANÇA 2 - CONSULTAS /////////////////////////
+int submenuconsultas();
+void consultaficha(); //void consultaFeminina();
+void linha();
+int submenuutilitarios();
+
+void util_limpaexclusao();
+void util_backuparquivo();
+void util_apagartudo();
+//////////////////////////////////////////////////
+
+// MUDANÇA 1 - CONSTANTES ////////////////////////
+const char DIATUAL[11] = "21/11/2023";
+const char PROGRAMADOR[14] = "Lucas Carleto";
+const char TURNO[6] = "Tarde";
+//////////////////////////////////////////////////
+
+int main(){
+  return menu();
+}
+
+int menu(){
+    int opc;
+    opc = 0;
+    do {
+        system("cls");
+        // MUDANÇA 5 - CABEÇALHO /////////////////////////
+        //printf("Desenvolvedor: %s", PROGRAMADOR);
+        //printf("\nDisciplina: Linguagem de Programacao - Turno: %s", TURNO);
+        //printf("\nHoje: %s", DIATUAL);
+
+        //printf("\nhoje: 13/11/2023");
+        cabecalhoficha("Menu Principal Funcionarios");
+        //printf("\nMenu Principal Funcionarios");
+        //////////////////////////////////////////////////
+        //printf("\n-------------------");
+        printf("\n 1. Cadastrar");
+        printf("\n 2. Consultar (Sequencial) ->");
+        printf("\n 3. Alterar");
+        printf("\n 4. Relatorios ->");
+        printf("\n 5. Utilitarios ->");
+        printf("\n 9. Finalizar/sair");
+
+        printf( "\n\n Informe a opcao desejada : ");
+        scanf( "%d", &opc) ;
+        if (opc == 1) {
+            cadastrar();
+        }
+        else if (opc == 2) {
+            submenuconsultas();
+        }
+        else if (opc == 3) {
+            alterarficha();
+        }
+        else if (opc == 4) {
+            submenurelatorios();
+        }
+        else if (opc == 5) {          ////////////////////// Função que falta //
+            submenuutilitarios();
+            //ListaConteuroArquivo();
+        }
+
+    } while (opc != 9);
+
+    return (opc) ;
+}
+
+
+
+// MUDANÇA 2 - CONSULTAS /////////////////////////
+int submenuconsultas()
+{
+    int opc;
+    opc = 0;
+    do {
+        system("cls");
+
+        // MUDANÇA 5 - CABEÇALHO /////////////////////////
+        //printf("Desenvolvedor: %s", PROGRAMADOR);
+        //printf("\nDisciplina: Linguagem de Programacao - Turno: %s", TURNO);
+        //printf("\nHoje: %s", DIATUAL);
+
+        //printf("\nhoje: 13/11/2023");
+        cabecalhoficha("Submenu Relatorios");
+        //printf("\nSubMenu Relatorios");
+        //////////////////////////////////////////////////
+        //printf("\n-------------------");
+
+        // MUDANÇA 5 - CABEÇALHO /////////////////////////
+        printf("\n 1. Individual");
+        printf("\n 2. Todos");
+        printf("\n 9. Voltar");
+
+
+        //printf("\n 1. Listar todos os Funcionarios Ativos");
+        //printf("\n 2. Listar todos os Funcionarios Inativos");
+        //printf("\n 3. Listar todas as Funcionarias Femininas");
+        //printf("\n 9. voltar...");
+        // MUDANÇA 5 - CABEÇALHO /////////////////////////
+        printf( "\n\n Informe a opcao desejada: ");
+        scanf( "%d", &opc) ;
+        if ( opc == 1) {
+            consultaficha();
+            //consultaSequencial();
+        }
+        else if (opc == 2) {
+            consultatodos();
+            //relatoriotodosinativos();
+        }
+        /*
+        else if (opc == 3) {
+            consultaFeminina();
+        }
+        */
+    } while (opc != 9);
+
+    return (opc) ;
+}
+
+//////////////////////////////////////////////////////////////
+
+int submenuutilitarios()
+{
+    int opc;
+    opc = 0;
+    do {
+        system("cls");
+
+        // MUDANÇA 5 - CABEÇALHO /////////////////////////
+        //printf("Desenvolvedor: %s", PROGRAMADOR);
+        //printf("\nDisciplina: Linguagem de Programacao - Turno: %s", TURNO);
+        //printf("\nHoje: %s", DIATUAL);
+
+        //printf("\nhoje: 13/11/2023");
+        cabecalhoficha("Submenu Utilitarios");
+        //printf("\nSubMenu Relatorios");
+        //////////////////////////////////////////////////
+        //printf("\n-------------------");
+
+        // MUDANÇA 5 - CABEÇALHO /////////////////////////
+        printf("\n 1. Limpar exclusoes logicas");
+        printf("\n 2. Fazer backup do arquivo de dados");
+        printf("\n 3. Limpar todos os registros do arquivo");
+        printf("\n 4. Exclusao Logica");
+        printf("\n 5. Exclusao Fisica");
+        printf("\n 6. Ordenacao");
+        printf("\n 9. Voltar");
+
+
+        //printf("\n 1. Listar todos os Funcionarios Ativos");
+        //printf("\n 2. Listar todos os Funcionarios Inativos");
+        //printf("\n 3. Listar todas as Funcionarias Femininas");
+        //printf("\n 9. voltar...");
+        // MUDANÇA 5 - CABEÇALHO /////////////////////////
+        printf( "\n\n Informe a opcao desejada: ");
+        scanf( "%d", &opc) ;
+        if (opc == 1) {
+            util_limpaexclusao();
+            //consultaSequencial();
+        }
+        else if (opc == 2) {
+            util_backuparquivo();
+            //relatoriotodosinativos();
+        }
+        else if (opc == 3) {
+            util_apagartudo();
+        }
+        else if (opc == 4) {
+            exclusaologica();
+        }
+        else if (opc == 5) {
+            exclusaoFisica();
+        }
+        else if (opc == 6){
+            ordenarDadosporId();
+        }
+    } while (opc != 9);
+
+    return (opc) ;
+}
+
+void util_limpaexclusao()
+{
+
+
+
+
+
+    int confirmacao = 0;
+
+    struct funcionario ficha;
+    char nome[50];
+    OpenFile(3);
+    FILE *auxarq = fopen(TEMPNAME, "wb");
+    fopen(auxarq, "rb+");
+    while(fread(&ficha, sizeof(ficha),1,arq))
+    {
+
+        if (ficha.e == 0)
+        {
+            printf("\n****%s", ficha.nome);
+            getchar();getchar();
+            fwrite(&ficha,sizeof(ficha),1,auxarq);
+            fseek(auxarq,0,2);
+        }
+
+    }
+    fclose(auxarq);
+    OpenFile(9);
+
+    remove(FILENAME);
+    fclose(auxarq);
+    rename(TEMPNAME, FILENAME);
+
+
+
+
+
+
+
+
+
+
+}
+
+void util_backuparquivo()
+{
+    struct funcionario ficha;
+    char backup[25] = "funcionarios000000.dados";
+    backup[12] = DIATUAL[0];
+    backup[13] = DIATUAL[1];
+    backup[14] = DIATUAL[3];
+    backup[15] = DIATUAL[4];
+    backup[16] = DIATUAL[8];
+    backup[17] = DIATUAL[9];
+
+    //01-34---89
+    OpenFile(3);
+    FILE *bacarq = fopen(backup, "wb");
+
+    while (fread(&ficha,sizeof(ficha),1,arq)) {
+        //printf("\n\n     %s\n\n", ficha.nome);
+        printf("\n%s --------------", ficha.nome);
+        fwrite(&ficha,sizeof(ficha),1,bacarq);
+        fseek(bacarq,0,2);
+    }
+    OpenFile(9);
+}
+
+void util_apagartudo()
+{
+    remove(FILENAME);
+}
+
+//////////////////////////////////////////////////////////////
+
+void consultaficha() {//void consultaFeminina() {
+    int finalizar = 0 ;
+    struct funcionario ficha;
+    struct funcionario fichaPesquisa;
+    OpenFile(1);
+    char nome[50];
+    do {
+        printf( "\nNome...: " );
+        setbuf(stdin, NULL);
+        scanf("%[^\n]" , fichaPesquisa.nome);
+        //
+        strcpy(nome, fichaPesquisa.nome);
+        //fazer a busca do registro para saber se ele consta do arquivo
+        int compa = 0;
+        while (fread(&ficha, sizeof(ficha), 1, arq)) {
+                //if (ficha.sexo[0] == 70 || ficha.sexo[0] == 102) {
+            //[LISTANOME]
+            if (strcmp(ficha.nome, nome) == 0)
+            {
+                compa++;
+                printf("\n %4d | %50s | %10s | %12.2f | %c", ficha.id, ficha.nome, ficha.dtcontrato, ficha.salario, ficha.sexo[0]);
+            }
+
+                //linha(ficha.id, ficha.nome, ficha.salario, ficha.sexo, ficha.dtcontrato, ficha.e);
+                //printf( "\n %4d | %s \t\t\t| %10s", ficha.id, ficha.nome, ficha.dtcontrato );
+                //}
+        }
+        OpenFile(9);
+        if (compa > 0)
+        {
+            rodapeficha();
+            finalizar = 9;
+        }
+        else
+        {
+            printf( "\n -----------------------------------------");
+            printf( "\n ");
+            printf("\n Nao localizou ... ,\n pressione algo para continuar ...");
+            getch();
+            finalizar = 9;
+        }
+    } while ( finalizar != 9) ;
+}
+
+
+
+
+
+void consultaFeminina() {
+    struct funcionario ficha;
+    OpenFile(1);
+    cabecalhoficha("Listagem Registros Funcionarias Femininas") ;
+    while ( fread(&ficha, sizeof(ficha), 1, arq)) {
+        if (ficha.sexo[0] == 70 || ficha.sexo[0] == 102) {
+            //[LISTANOME]
+            printf("\n %4d | %50s | %10s | %12.2f | %c", ficha.id, ficha.nome, ficha.dtcontrato, ficha.salario, ficha.sexo[0]);
+            //linha(ficha.id, ficha.nome, ficha.salario, ficha.sexo, ficha.dtcontrato, ficha.e);
+            //printf( "\n %4d | %s \t\t\t| %10s", ficha.id, ficha.nome, ficha.dtcontrato );
+        }
+    }
+    OpenFile(9);
+    rodapeficha();
+}
+
+
+
+        // a - id | b - nome | c - salário | d - sexo | e - dtcontrato | f - e //
+/*
+void linha(int a, char b[50], float c, char d[1], char e[10], int f)
+{
+        //a, b, e, c, d, f
+    printf("\n %4d | %s \t\t\t| %10s | %5.02f | %c", a, b, e, c, d);
+    //printf("\n %4d | %s \t\t\t| %10s | %5.02f | %c | %d", a, b, e, c, d, f);
+    //printf("\n %4d | %s \t\t\t| %10s | %c", ficha.id, ficha.nome, ficha.dtcontrato, ficha.sexo);
+}
+*/
+/*
+struct funcionario {
+    int id;   // indice dos registros
+    char nome[50]; // nome completo do funcionario
+    float salario; // valor do salario
+    char sexo[1]; // sexo do aluno
+    char dtcontrato[10] ; // data contratacao funcionario
+    int e;  // controle de exclusao logica
+} ;
+*/
+//////////////////////////////////////////////////
+
+
+
+int submenurelatorios(){
+    int opc;
+    opc = 0;
+    do {
+        system("cls");
+
+        // MUDANÇA 5 - CABEÇALHO /////////////////////////
+        cabecalhoficha("Submenu Relatorios");
+        //printf("\nhoje: 13/11/2023");
+        //////////////////////////////////////////////////
+
+        //printf("\nSubMenu Relatorios");
+        //printf("\n-------------------");
+        printf("\n 1. Listar todos os Funcionarios Ativos");
+        printf("\n 2. Listar todos os Funcionarios Inativos");
+        printf("\n 3. Listar todos os Funcionarias Femininas");
+        printf("\n 9. voltar...");
+        printf( "\n\n Informe a opcao desejada : ");
+        scanf( "%d", &opc) ;
+        if (opc == 1) {
+            consultatodos();
+            //consultaSequencial();
+        }
+        else if (opc == 2) {
+            relatoriotodosinativos();
+        }
+        else if (opc == 3) {
+            consultaFeminina();
+        }
+    } while (opc != 9);
+
+    return (opc) ;
+}
+
+int cadastrar(){
+    int finalizar = 0 ;
+    struct funcionario ficha;
+    OpenFile(2);
+    do {
+        cabecalhoficha("ficha Inclusao Funcionarios") ;
+        printf("\ncodigo.: ");
+        setbuf(stdin, NULL);
+        scanf("%d", &ficha.id);
+
+        printf("\nnome...: ");
+        setbuf(stdin, NULL);
+        scanf("%[^\n]" , ficha.nome);
+
+        printf("\nContratacao...: ");
+        setbuf(stdin, NULL);
+        scanf("%[^\n]" , ficha.dtcontrato);
+
+        printf("\nSalario....: ");
+        setbuf(stdin, NULL);
+        scanf("%f", &ficha.salario);
+
+        printf("\nSexo....: ");
+        setbuf(stdin, NULL);
+        scanf("%c", ficha.sexo);
+        //ficha.salario = 0 ;
+        // ficha.sexo = "" ;
+        //ficha.dtcontrato = "01/01/1980";
+        ficha.e = 0;
+        fseek(arq,0,2);
+        fwrite(&ficha,sizeof(ficha),1,arq);        //
+
+        finalizar = continuarficha();
+
+    } while ( finalizar != 9) ;
+     OpenFile(9);
+    return( 1 );
+}
+
+//void consultaSequencial(){
+void consultatodos(){
+    struct funcionario ficha ;
+    OpenFile(1);
+    cabecalhoficha("Listagem Registros Funcionarios") ;
+    while ( fread(&ficha, sizeof(ficha), 1, arq)) {
+        if ( ficha.e == 0) {
+            //[LISTANOME] // 18, -2
+            printf("\n %4d | %50s | %10s | %12.2f | %c", ficha.id, ficha.nome, ficha.dtcontrato, ficha.salario, ficha.sexo[0]);
+            //printf( "\n %4d | %s \t\t\t| %10s", ficha.id, ficha.nome, ficha.dtcontrato );
+        }
+    }
+    OpenFile(9);
+    rodapeficha();
+}
+
+int listaSequencial(){
+    struct funcionario ficha ;
+    OpenFile(1);
+    cabecalhoficha("LISTAGEM Funcionarios") ;
+    while ( fread(&ficha, sizeof(ficha), 1, arq)) {
+        if ( ficha.e == 0) {
+            //[LISTANOME]
+            printf("\n %4d | %50s | %10s | %12.2f | %c", ficha.id, ficha.nome, ficha.dtcontrato, ficha.salario, ficha.sexo[0]);
+            //printf( "\n %4d | %50s | %10s | %.2f", ficha.id, ficha.nome, ficha.dtcontrato, ficha.salario );
+        }
+    }
+    OpenFile(9);
+    rodapeficha();
+}
+
+void alterarficha(){
+    int finalizar = 0 ;
+    struct funcionario ficha;
+    struct funcionario fichaPesquisa;
+    char nome[50];
+ do {
+        cabecalhoficha("ALTERACAO ficha Funcionarios") ;
+        printf( "\nnome...: " );
+        setbuf(stdin, NULL);
+        scanf( "%[^\n]" , fichaPesquisa.nome);
+        //
+        strcpy( nome, fichaPesquisa.nome );
+        //fazer a busca do registro para saber se ele consta do arquivo
+        if ( pesquisaNome(nome) == 1 ){
+            printf( "\n ficha Dados : " );
+            OpenFile(3);
+            while (fread(&ficha,sizeof(ficha),1,arq)) {
+                if (strcmp(ficha.nome,nome)==0){
+                    if (ficha.e==0) {
+                        fseek(arq,ftell(arq)-sizeof(ficha),0);
+                        printf("\ncodigo : [ %d ] ", ficha.id);
+                        printf( "\nnome [%s]...: ", ficha.nome );
+                        setbuf(stdin, NULL);
+                        scanf( "%[^\n]" , ficha.nome);
+                        printf( "\nContratacao [%s]...: ", ficha.dtcontrato );
+                        setbuf(stdin, NULL);
+                        scanf( "%[^\n]" , ficha.dtcontrato);
+                        printf( "\nSalario [%.2f]....: ", ficha.salario );
+                        setbuf(stdin, NULL);
+                        scanf( "%f", &ficha.salario);
+
+                        fwrite(&ficha,sizeof(ficha),1,arq);
+                        fseek(arq,0,2);
+                    }
+                }
+
+            } // fim while arq
+            OpenFile(9);
+        } else {
+            printf(" nao localizou ... ");
+        }
+        finalizar = continuarficha();
+    } while ( finalizar != 9) ;
+}
+
+void exclusaologica(){
+    int finalizar = 0 ;
+    int confirmacao = 0;
+    struct funcionario ficha;
+    char nome[50];
+ do {
+        cabecalhoficha("EXCLUSAO ficha Funcionarios") ;
+        printf( "\nnome...: " );
+        setbuf(stdin, NULL);
+        scanf( "%[^\n]" , nome);
+        //fazer a busca do registro para saber se ele consta do arquivo
+        if ( pesquisaNome(nome) == 1 ){
+            printf( "\n ficha Dados : " );
+            OpenFile(3);
+            while (fread(&ficha,sizeof(ficha),1,arq)) {
+                if (strcmp(ficha.nome,nome)==0){
+                    if (ficha.e==0) {
+                        fseek(arq,ftell(arq)-sizeof(ficha),0);
+                        mostrarficha(ficha);
+                        ficha.e = 1;
+                        printf( "Deseja excluir a ficha? \n Pressione [1] para SIM e outra tecla para cancelar ...");
+                        scanf("%d", &confirmacao);
+                        if ( confirmacao == 1 ) {
+                           fwrite(&ficha,sizeof(ficha),1,arq);
+                        }
+                        fseek(arq,0,2);
+                    }
+                }
+
+            } // fim while arq
+            OpenFile(9);
+        } else {
+            printf(" nao localizou ... ");
+        }
+        finalizar = continuarficha();
+    } while ( finalizar != 9) ;
+}
+
+// MUDANÇA 5 - CABEÇALHO /////////////////////////
+void exclusaoFisica(){
+    int finalizar = 0;
+    int confirmacao = 0;
+    struct funcionario ficha;
+    char nome[50];
+    do {
+        cabecalhoficha("Exclusao Fisica Funcionarios") ;
+        printf("\nNome...: ");
+        setbuf(stdin, NULL);
+        scanf("%[^\n]", nome);
+        //fazer a busca do registro para saber se ele consta do arquivo
+        if (pesquisaNome(nome) == 1) {
+            printf("\n ficha Dados: ");
+            OpenFile(3);
+            FILE *auxarq = fopen("temp_funcionarios.dados", "wb");
+
+            while (fread(&ficha,sizeof(ficha),1,arq)) {
+                if (strcmp(ficha.nome,nome) != 0)
+                {
+                    //printf("\n\n     %s\n\n", ficha.nome);
+                    fwrite(&ficha,sizeof(ficha),1,auxarq);
+                    fseek(auxarq,0,2);
+                }
+            }
+            OpenFile(9);
+            OpenFile(3);
+
+            while (fread(&ficha,sizeof(ficha),1,arq)) {
+                if (strcmp(ficha.nome,nome)==0){
+                    //if (ficha.e == 0) {
+                        fseek(arq,ftell(arq)-sizeof(ficha),0);
+                        mostrarficha(ficha);
+
+                        printf("Deseja excluir a ficha? \n Pressione [1] para SIM e outra tecla para cancelar ...");
+                        scanf("%d", &confirmacao);
+                        /*
+                        if (confirmacao == 1) {
+                            remove(FILENAME);
+                            rename(TEMPNAME, FILENAME);
+                           //fwrite(&ficha,sizeof(ficha),1,arq);
+                        }
+                        */
+                        fseek(arq,0,2);
+                    //}
+                }
+
+            } // fim while arq
+            OpenFile(9);
+
+
+            if (confirmacao == 1) {
+                remove(FILENAME);
+                fclose(auxarq);
+                rename(TEMPNAME, FILENAME);
+                //fwrite(&ficha,sizeof(ficha),1,arq);
+            }
+
+
+        } else {
+            printf(" nao localizou ... ");
+        }
+        finalizar = continuarficha();
+    } while (finalizar != 9);
+}
+// MUDANÇA 5 - CABEÇALHO /////////////////////////
+
+int pesquisaNome(char nome[]){
+   struct funcionario ficha;
+   OpenFile(1);
+    while ( fread(&ficha, sizeof(ficha), 1, arq)) {
+        //printf("\n %s == %s" , ficha.nome, nome );
+        if (strcmp(ficha.nome,nome)==0){
+            OpenFile(9);
+            return (1);
+        }
+    }
+    OpenFile(9);
+    return (-1) ;
+}
+
+int OpenFile(int openType){
+// openType=  1 - leitura / 2 - criacao
+//
+    // fazendo abertura somente leitura
+    if ( openType == 1 ) {
+        if ((arq = fopen( FILENAME, "rb")) == NULL) {
+            return 1;  // erro
+        } else {
+            return 0 ;
+        }
+    }
+    // fazendo abertura criação caso não exista
+    if ( openType == 2) {
+        if ((arq=fopen( FILENAME, "rb+"))==NULL) {
+            // erro ao tentar abrir o arquivo, o arquivo não existe
+            if ((arq=fopen( FILENAME, "wb"))==NULL) {
+                return 2; // erro ao criar
+            }
+            return 0 ;
+        }
+    }
+    // fazendo abertura leitura e escrita
+    if ( openType == 3 ) {
+        if ((arq = fopen( FILENAME, "rb+")) == NULL) {
+            return 1;  // erro
+        } else {
+            return 0 ;
+        }
+    }
+    if ( openType == 9 ) {
+        fclose(arq);
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+void ListaConteuroArquivo(){
+    struct funcionario ficha ;
+    cabecalhoficha("LISTA CONTEUDO ARQUIVO FUNCIONARIOS.DADOS") ;
+    OpenFile(1);
+    while ( fread(&ficha, sizeof(ficha), 1, arq)) {
+        //[LISTANOME] COM E
+        printf("\n %4d | %50s | %10s | %12.2f | %d | %c", ficha.id, ficha.nome, ficha.dtcontrato, ficha.salario, ficha.e, ficha.sexo[0]);
+        //printf( "\n %4d | %s | %10s | %.2f |  %d", ficha.id, ficha.nome, ficha.dtcontrato, ficha.salario, ficha.e );
+    }
+    OpenFile(9);
+    rodapeficha();
+}
+
+void relatoriotodosinativos() {
+    struct funcionario ficha;
+    cabecalhoficha("RELATORIO DE TODOS INATIVOS") ;
+    OpenFile(1);
+    while ( fread(&ficha, sizeof(ficha), 1, arq)) {
+        if ( ficha.e == 1) {
+            //[LISTANOME]
+            printf("\n %4d | %50s | %10s | %12.2f | %c", ficha.id, ficha.nome, ficha.dtcontrato, ficha.salario, ficha.sexo[0]);
+            //printf( "\n %4d | %s \t\t\t| %10s", ficha.id, ficha.nome, ficha.dtcontrato );
+        }
+    }
+    OpenFile(9);
+    rodapeficha();
+}
+
+void ordenarDadosporId(){
+    struct funcionario ficha ;
+    struct funcionario lista[100];
+    int i,x ;
+    OpenFile(1);
+    x = 0 ;
+    while ( fread(&ficha, sizeof(ficha), 1, arq)) {
+        if ( ficha.e == 0) {
+           // transferir dados da ficha para um vetor
+           lista[x] = ficha;
+           x ++ ;
+        }
+    }
+    OpenFile(9);
+    //
+    // ordenar
+    classificarpornome( lista, x );
+    // listando
+    for ( i = 0 ; i < x ; i ++){
+        printf( " \n %s ",lista[i].nome);
+    }
+    rodapeficha();
+}
+
+void ordenarDadosporNome(){
+
+}
+
+int classificarporid(struct funcionario vetor[], int n) {
+    struct funcionario aux;
+    int i, j;
+    for (i=0;i<n-1;i++)
+        for(j=i+1; j<n; j++)
+            if ( vetor[i].id > vetor[j].id ){
+                aux = vetor[i];
+                vetor[i] = vetor[j];
+                vetor[j] = aux ;
+            }
+    return 0;
+}
+
+int classificarpornome(struct funcionario vetor[], int n) {
+    struct funcionario aux;
+    int i, j;
+    for (i=0;i<n-1;i++)
+        for(j=i+1; j<n; j++)
+            if ( strcmp(vetor[i].nome ,vetor[j].nome) > 0 ){
+                aux = vetor[i];
+                vetor[i] = vetor[j];
+                vetor[j] = aux ;
+            }
+    return 0;
+}
+
+void mostrarficha( struct funcionario ficha){
+    printf( "\ncodigo.......: %d  ", ficha.id);
+    printf( "\nnome.........: %s ", ficha.nome );
+    printf( "\nContratacao..: %s ", ficha.dtcontrato );
+    printf( "\nSalario......: %.2f ", ficha.salario );
+}
+
+void cabecalhoficha(char titulo[50]){
+    system("cls");
+    printf("\n ");
+        // MUDANÇA 5 - CABEÇALHO /////////////////////////
+        printf("Desenvolvedor: %s", PROGRAMADOR);
+        printf("\n Disciplina: Linguagem de Programacao - Turno: %s", TURNO);
+        printf("\n Hoje: %s", DIATUAL);
+        //////////////////////////////////////////////////
+    printf("\n %s", titulo);
+    printf("\n -----------------------------------------");
+    printf("\n ");
+}
+
+void rodapeficha(){
+    printf( "\n ");
+    printf( "\n -----------------------------------------");
+    printf( "\n ");
+    printf("\n Listagem de funcionarios, concluida com sucesso! ,\n pressione algo para continuar ...");
+    getch();
+}
+
+int continuarficha(){
+    int finalizar;
+    printf("\n -----------------------------------------");
+    printf("\n ");
+    printf("\n Deseja retornar ao menu? \[9 para Retornar, outra tecla para continuar]: ");
+    scanf( "%d", &finalizar) ;
+    return finalizar ;
+}
